@@ -3,6 +3,13 @@
 
 """
 A Simple Rename Tool.
+SRT: rename all files in the dictionary start from '0'.
+
+author:Tynox
+website:http://tarkrul.info
+
+This is free and unencumbered software released into the public domain.
+For more information, please refer to <http://unlicense.org>
 """
 
 import os
@@ -15,6 +22,7 @@ opts = None
 args = None
 fileList = None
 dir = None
+suffix = None
 
 def init():
     """
@@ -25,7 +33,7 @@ def init():
     
     # get options
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hv", ["--help", "--version"])
+        opts, args = getopt.getopt(sys.argv[1:], "hvs:", ["--help", "--version", "--suffix="])
     except getopt.GetoptError as err:
         print str(err)
         getHelp()
@@ -40,16 +48,24 @@ def parseOpts():
     """
     global dir
     global fileList
+    global suffix
+    
+    shouldExit = False
     
     # check options. If options is None, exit. 
     for o, a in opts:
         if o in ("-h", "--help"):       # get help
             getHelp()
-            sys.exit()
-        elif o in ("-v", "--version"):
+            shouldExit = True
+        elif o in ("-v", "--version"):  # show version
             showVersion()
-            sys.exit()
+            shouldExit = True
+        elif o in ("-s", "--suffix"):   # set suffix
+            suffix = a
             
+    if shouldExit:
+        sys.exit()
+    
     # get dir
     if args is None or len(args) == 0:
         print "SRT:no source dictionary."
@@ -69,7 +85,11 @@ def getHelp():
     get tool help
     """
     showVersion()
-    print "usage:rename_tool.py [-h|--help] [-v|--version] [<dictionary>]"
+    print "SRT: rename all files in the dictionary start from '0'"
+    print "usage:rename_tool.py [-h|--help] [-v|--version] [[-s|--suffix] <arg:dictionary>]"
+    print "      -h --help      Show help"
+    print "      -v --version   Show version"
+    print "      -s --suffix    Set  suffix. Rename files with the suffix"
     
   
 def showVersion():
@@ -85,16 +105,22 @@ def renameFiles():
     """
     # check fileList. if fileList is None, exit.
     if fileList is None:
-        print "no files in the dictionary."
+        print "SRT:no files in the dictionary."
         sys.exit()
         
+    print "----------"
+        
     try:
+        s = suffix if suffix is not None else ""
         for i, filename in enumerate(fileList):
-            os.renames(dir+filename, "{0}{1}.txt".format(dir, i+1))
+            new_name = "{0}{1}{2}".format(dir, i+1, s)
+            os.renames(dir+filename, "{0}".format(new_name))
+            print "SRT:Rename file '{0}' --> '{1}'".format(dir + filename, new_name)
     except:
-        print "Error! Failed to rename files. Check the existing filenames."
+        print "SRT:Error! Failed to rename files. Check the existing filenames."
     else:
-        print "Done!"
+        print "----------"
+        print "SRT:Rename successfully!"
         
 
 if __name__ == "__main__":
