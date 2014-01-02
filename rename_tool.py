@@ -3,12 +3,13 @@
 
 """
 A Simple Rename Tool.
-version: 0.2
 """
 
 import os
 import sys
 import getopt
+
+version = 0.2
 
 opts = None
 args = None
@@ -22,11 +23,12 @@ def init():
     global opts
     global args
     
+    # get options
     try:
-        #dir = sys.argv[1]
-        opts, args = getopt.getopt(sys.argv[1:], "d:", ["dir="])
-    except getopt.GetoptError, err:
+        opts, args = getopt.getopt(sys.argv[1:], "hv", ["--help", "--version"])
+    except getopt.GetoptError as err:
         print str(err)
+        getHelp()
         sys.exit()
     else:
         parseOpts()
@@ -36,20 +38,45 @@ def parseOpts():
     """
     parse opts and arguments
     """
-    # fileList = os.listdir(dir)
-    global fileList
     global dir
+    global fileList
     
-    # check options. If options is None, exit.
-    if opts is None:
-        print "no source dictionary."
-        sys.exit()
-    
+    # check options. If options is None, exit. 
     for o, a in opts:
-        if o in ("-d", "--dir"):
-            dir = a
-            fileList = os.listdir(a)
-    renameFiles()
+        if o in ("-h", "--help"):       # get help
+            getHelp()
+            sys.exit()
+        elif o in ("-v", "--version"):
+            showVersion()
+            sys.exit()
+            
+    # get dir
+    if args is None or len(args) == 0:
+        print "SRT:no source dictionary."
+        sys.exit()
+    dir = args[0]
+    try:
+        fileList = os.listdir(dir)
+    except:
+        print "SRT:wrong path"
+        sys.exit()
+    else:
+        renameFiles()
+    
+ 
+def getHelp():
+    """
+    get tool help
+    """
+    showVersion()
+    print "usage:rename_tool.py [-h|--help] [-v|--version] [<dictionary>]"
+    
+  
+def showVersion():
+    """
+    show version
+    """
+    print "Simple Rename Tool version:v{0}".format(version)
 
 
 def renameFiles():
