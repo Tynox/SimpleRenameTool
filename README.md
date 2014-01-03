@@ -1,5 +1,8 @@
 SimpleRenameTool
 ================
+This is a simple rename tool.       
+You need python 2.7 environment to run it.      
+Get the latest python 2.7 from http://www.python.org/download/ and install.
 
 Usage
 ----------------
