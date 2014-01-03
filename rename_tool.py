@@ -16,7 +16,7 @@ import os
 import sys
 import getopt
 
-version = 0.2
+version = 0.3
 
 opts = None
 args = None
@@ -35,7 +35,8 @@ def init():
     
     # get options
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hvs:b:n:", ["--help", "--version", "--suffix=", "--begin=", "--name="])
+        opts, args = getopt.getopt(sys.argv[1:], "hvs:b:n:", ["--help", "--version", 
+                                    "--suffix=", "--begin=", "--name="])
     except getopt.GetoptError as err:
         print str(err)
         getHelp()
