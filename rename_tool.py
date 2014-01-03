@@ -24,6 +24,7 @@ fileList = None
 dir = None
 suffix = None
 begin = None
+name = None
 
 def init():
     """
@@ -34,7 +35,7 @@ def init():
     
     # get options
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hvs:b:", ["--help", "--version", "--suffix=", "--begin="])
+        opts, args = getopt.getopt(sys.argv[1:], "hvs:b:n:", ["--help", "--version", "--suffix=", "--begin=", "--name="])
     except getopt.GetoptError as err:
         print str(err)
         getHelp()
@@ -51,6 +52,7 @@ def parseOpts():
     global fileList
     global suffix
     global begin
+    global name
     
     shouldExit = False
     
@@ -66,6 +68,8 @@ def parseOpts():
             suffix = a
         elif o in ("-b", "--begin"):    # set begin
             begin = int(a)
+        elif o in ("-n", "--name"):     # specify a name
+            name = a
             
     if shouldExit:
         sys.exit()
@@ -90,11 +94,12 @@ def getHelp():
     """
     showVersion()
     print "SRT: rename all files in the dictionary start from '0' by default."
-    print "usage:rename_tool.py [-h|--help] [-v|--version] [[-s|--suffix] [-b|--begin] <arg:dictionary>]"
+    print "usage:rename_tool.py [-h|--help] [-v|--version] [[-s|--suffix] [-b|--begin] [-n|--name] <arg:dictionary>]"
     print "      -h --help      Show help"
     print "      -v --version   Show version"
     print "      -s --suffix    Set suffix. Rename files with the suffix"
     print "      -b --begin     Set begging file count: -b 1 --> start from 1"
+    print "      -n --name      Set a specified name"
     
   
 def showVersion():
@@ -118,8 +123,9 @@ def renameFiles():
     try:
         s = suffix if suffix is not None else ""
         b = begin if begin is not None else 0
+        n = name if name is not None else ""
         for i, filename in enumerate(fileList):
-            new_name = "{0}{1}{2}".format(dir, i+b, s)
+            new_name = "{0}{1}{2}".format(dir+n, i+b, s)
             os.renames(dir+filename, "{0}".format(new_name))
             print "SRT:Rename file '{0}' --> '{1}'".format(dir + filename, new_name)
     except:
