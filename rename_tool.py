@@ -16,7 +16,7 @@ import os
 import sys
 import getopt
 
-version = 0.3
+version = 0.4
 
 opts = None
 args = None
