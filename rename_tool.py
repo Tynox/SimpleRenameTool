@@ -120,15 +120,24 @@ def renameFiles():
         sys.exit()
         
     print "----------"
-        
+    
+    new_filelist = dict()
+    # rename all files. avoid target name existing.
+    for i, filename in enumerate(fileList):
+        new_name = "{0}_{1}".format(dir+filename, i)
+        os.rename(dir+filename, new_name)
+        new_filelist[filename] = new_name
+
     try:
         s = suffix if suffix is not None else ""
         b = begin if begin is not None else 0
         n = name if name is not None else ""
-        for i, filename in enumerate(fileList):
-            new_name = "{0}{1}{2}".format(dir+n, i+b, s)
-            os.renames(dir+filename, "{0}".format(new_name))
-            print "SRT:Rename file '{0}' --> '{1}'".format(dir + filename, new_name)
+        count = 0
+        for old_name, filename in new_filelist.iteritems():
+            new_name = "{0}{1}{2}".format(dir+n, count+b, s)
+            os.renames(dir+filename, new_name)
+            count += 1
+            print "SRT:Rename file '{0}' --> '{1}'".format(dir + old_name, new_name)
     except:
         print "SRT:Error! Failed to rename files. Check the existing filenames."
     else:
