@@ -134,9 +134,12 @@ def renameFiles():
         b = begin if begin is not None else 0
         n = name if name is not None else ""
         count = 0
-        for old_name, filename in new_filelist.iteritems():
+        order = [k for k in new_filelist.iterkeys()]
+        order.sort()
+        # for old_name, filename in new_filelist.iteritems():
+        for i, old_name in enumerate(order):
             new_name = "{0}{1}{2}".format(dir+n, count+b, s)
-            os.renames(dir+filename, new_name)
+            os.renames(dir+new_filelist[old_name], new_name)
             count += 1
             print "SRT:Rename file '{0}' --> '{1}'".format(dir + old_name, new_name)
     except:
