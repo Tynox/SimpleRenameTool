@@ -82,6 +82,7 @@ def parseOpts():
     dir = args[0]
     try:
         fileList = os.listdir(dir)
+        fileList.sort()
     except:
         print "SRT:wrong path"
         sys.exit()
