@@ -143,7 +143,7 @@ def renameFiles():
             count += 1
             print "SRT:Rename file '{0}' --> '{1}'".format(dir + old_name, new_name)
     except:
-        print "SRT:Error! Failed to rename files. Check the existing filenames."
+        print "SRT:error occurred."
     else:
         print "----------"
         print "SRT:Rename successfully!"
