@@ -111,6 +111,22 @@ def showVersion():
     print "Simple Rename Tool version:v{0}".format(version)
 
 
+def resortFiles(fileList):
+    """
+    rename all files to avoid target name existing. And then sort items by st_mtime.
+    """
+    if fileList is None or not len(fileList):
+        print "SRT:nofiles in the dictionary."
+        sys.exit()
+
+    new_file_list = list()
+    for f in fileList:
+        new_file_list.append(PFileStat(f, os.lstat(dir+ "/" +f)))
+
+    new_file_list.sort(key=lambda i: i.st_mtime)
+    return new_file_list
+
+
 def renameFiles():
     """
     rename files
@@ -122,32 +138,43 @@ def renameFiles():
         
     print "----------"
     
-    new_filelist = dict()
-    # rename all files. avoid target name existing.
-    for i, filename in enumerate(fileList):
-        new_name = "{0}_{1}".format(dir+filename, i)
-        os.rename(dir+filename, new_name)
-        new_filelist[filename] = new_name
+    # rename all files to avoid target name existing. And then sort items by st_mtime.
+    new_filelist = resortFiles(fileList)
 
     try:
         s = suffix if suffix is not None else ""
         b = begin if begin is not None else 0
         n = name if name is not None else ""
         count = 0
-        order = [k for k in new_filelist.iterkeys()]
-        order.sort()
-        # for old_name, filename in new_filelist.iteritems():
-        for i, old_name in enumerate(order):
-            new_name = "{0}{1}{2}".format(dir+n, count+b, s)
-            os.renames(dir+new_filelist[old_name], new_name)
+        for i in new_filelist:
+            new_name = "{0}{1}{2}".format(dir+"/"+n, count+b, s)
+            os.renames(dir+"/"+i.name, new_name)
             count += 1
-            print "SRT:Rename file '{0}' --> '{1}'".format(dir + old_name, new_name)
+            print "SRT:Rename file '{0}' --> '{1}'".format(dir+"/"+i.name, new_name)
     except:
         print "SRT:error occurred."
     else:
         print "----------"
         print "SRT:Rename successfully!"
         
+
+class PFileStat(object):
+    def __init__(self, name, fstat):
+        self.__name = name
+        self.__fstat = fstat
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def fstat(self):
+        return self.__fstat
+
+    @property
+    def st_mtime(self):
+        return self.__fstat.st_mtime
+
 
 if __name__ == "__main__":
     init()
