@@ -21,7 +21,7 @@ version = 0.6
 opts = None
 args = None
 fileList = None
-dir = None
+dir_source = None
 suffix = None
 begin = None
 name = None
@@ -49,7 +49,7 @@ def parseOpts():
     """
     parse opts and arguments
     """
-    global dir
+    global dir_source
     global fileList
     global suffix
     global begin
@@ -75,13 +75,13 @@ def parseOpts():
     if shouldExit:
         sys.exit()
     
-    # get dir
+    # get dir_source
     if args is None or len(args) == 0:
         print "SRT:no source dictionary."
         sys.exit()
-    dir = args[0]
+    dir_source = args[0]
     try:
-        fileList = os.listdir(dir)
+        fileList = os.listdir(dir_source)
         fileList.sort()
     except:
         print "SRT:wrong path"
@@ -121,7 +121,7 @@ def resortFiles(fileList):
 
     new_file_list = list()
     for f in fileList:
-        new_file_list.append(PFileStat(f, os.lstat(dir+ "/" +f)))
+        new_file_list.append(PFileStat(dir_source, f, os.lstat(dir_source + "/" + f)))
 
     new_file_list.sort(key=lambda i: i.st_mtime)
     return new_file_list
@@ -147,10 +147,10 @@ def renameFiles():
         n = name if name is not None else ""
         count = 0
         for i in new_filelist:
-            new_name = "{0}{1}{2}".format(dir+"/"+n, count+b, s)
-            os.renames(dir+"/"+i.name, new_name)
+            new_name = "{0}{1}{2}".format(dir_source+"/"+n, count+b, s)
+            os.renames(dir_source+"/"+i.name, new_name)
             count += 1
-            print "SRT:Rename file '{0}' --> '{1}'".format(dir+"/"+i.name, new_name)
+            print "SRT:Rename file '{0}' --> '{1}'".format(dir_source+"/"+i.original_name, new_name)
     except:
         print "SRT:error occurred."
     else:
@@ -159,12 +159,20 @@ def renameFiles():
         
 
 class PFileStat(object):
-    def __init__(self, name, fstat):
+    def __init__(self, dir_source, name, fstat):
         self.__name = name
         self.__fstat = fstat
+        self.__ex_name = name + name
+
+        # rename the file name
+        os.renames(dir_source + "/" + self.__name, dir_source + "/" + self.__ex_name)
 
     @property
     def name(self):
+        return self.__ex_name
+
+    @property
+    def original_name(self):
         return self.__name
 
     @property
