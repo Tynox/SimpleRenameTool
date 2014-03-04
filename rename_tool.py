@@ -142,11 +142,17 @@ def renameFiles():
     new_filelist = resortFiles(fileList)
 
     try:
-        s = suffix if suffix is not None else ""
         b = begin if begin is not None else 0
         n = name if name is not None else ""
         count = 0
         for i in new_filelist:
+            if suffix is None:
+                if i.original_name.rfind(".") != -1:
+                    s = i.original_name[i.original_name.rfind("."):]
+                else:
+                    s = ""
+            else:
+                s = suffix
             new_name = "{0}{1}{2}".format(dir_source+"/"+n, count+b, s)
             os.renames(dir_source+"/"+i.name, new_name)
             count += 1
